@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: 0 1 * * *
   push:
-    branches: [ main, ca_cilogon-basic ]
+    branches: [ main, ca_cilogon-basic, igi-test-ca ]
   pull_request:
     branches: [ main ]
 
