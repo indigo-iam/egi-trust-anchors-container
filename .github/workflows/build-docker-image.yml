@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
-name: build docker image
+name: Build Docker image for EGI trustanchors + IGI Test CA
 
 on:
   schedule:
