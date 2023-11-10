@@ -4,9 +4,9 @@ on:
   schedule:
     - cron: 0 1 * * *
   push:
-    branches: [ main, ca_cilogon-basic, igi-test-ca ]
+    branches: [ igi-test-ca ]
   pull_request:
-    branches: [ main ]
+    branches: [ igi-test-ca ]
 
 jobs:
   docker-build:
