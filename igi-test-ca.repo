@@ -1,8 +1,7 @@
-[Test-CA]
+[Test-CA] 
 name=Test-CA
-baseurl=https://ci.cloud.cnaf.infn.it/job/repo_test_ca/lastSuccessfulBuild/artifact/yum/
+baseurl=https://jenkins-ci.cr.cnaf.infn.it:8443/job/igi-test-ca-repo/job/master/lastSuccessfulBuild/artifact/yum/
 protect=1
 enabled=1
 priority=1
 gpgcheck=0
-sslverify=0
