@@ -38,6 +38,11 @@ if [ -n "${CA_BUNDLE_TARGET}" ]; then
   rsync -avu -O --no-owner --no-group --no-perms --exclude 'CA/private'  /etc/pki/ ${CA_BUNDLE_TARGET}
 fi
 
+if [ -n "${CA_BUNDLE_SECRET_TARGET}" ]; then
+  echo "Copying ca bundle to ${CA_BUNDLE_SECRET_TARGET}"
+  kubectl create secret generic ca-secret --from-file=ca.crt=$DEST/pem/tls-ca-bundle-all.pem --dry-run=client -o yaml | kubectl apply -f -
+fi
+
 if [ $# -gt 0 ]; then
   echo "Certificate copy requested to $1"
   rsync -avu -O --no-owner --no-group --no-perms /etc/grid-security/certificates/ $1
