@@ -42,8 +42,7 @@ if [ -n "${CA_BUNDLE_SECRET_TARGET}" ]; then
   echo "Copying ca bundle to ${CA_BUNDLE_SECRET_TARGET}"
 
   if kubectl get secret "$CA_BUNDLE_SECRET_TARGET" 2>/dev/null; then
-    kubectl create secret generic "$CA_BUNDLE_SECRET_TARGET" --from-file=ca.crt=$DEST/pem/tls-ca-bundle-all.pem --dry-run=client -o yaml | kubectl re
-place -f -
+    kubectl create secret generic "$CA_BUNDLE_SECRET_TARGET" --from-file=ca.crt=$DEST/pem/tls-ca-bundle-all.pem --dry-run=client -o yaml | kubectl replace -f -
     echo "Secret '$CA_BUNDLE_SECRET_TARGET' updated."
   else
     kubectl create secret generic "$CA_BUNDLE_SECRET_TARGET" --from-file=ca.crt=$DEST/pem/tls-ca-bundle-all.pem
