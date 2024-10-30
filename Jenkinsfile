@@ -23,6 +23,18 @@ pipeline {
       }
     }
   }
+  post {
+    failure {
+      mattermostSend(message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} has failed (<${env.BUILD_URL}|Open>)", color: "danger")
+    }
+    changed {
+      script{
+        if ('SUCCESS'.equals(currentBuild.result)) {
+          mattermostSend(message: "${env.JOB_NAME} - ${env.BUILD_NUMBER} Back to normal (<${env.BUILD_URL}|Open>)", color: "good")
+        }
+      }
+    }
+  }
 }
 
 
