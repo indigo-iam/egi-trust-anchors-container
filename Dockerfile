@@ -1,4 +1,4 @@
-FROM centos:7
+FROM almalinux:9
 
 COPY EGI-trustanchors.repo /etc/yum.repos.d/
 COPY ./update-trust-anchors.sh /
