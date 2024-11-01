@@ -41,6 +41,11 @@ fi
 if [ -n "${CA_BUNDLE_SECRET_TARGET}" ]; then
   echo "Copying ca bundle to ${CA_BUNDLE_SECRET_TARGET}"
 
+  if ! command -v kubectl &> /dev/null; then
+    curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
+    chmod +x /usr/local/bin/kubectl
+  fi
+
   if kubectl get secret "$CA_BUNDLE_SECRET_TARGET" 2>/dev/null; then
     kubectl create secret generic "$CA_BUNDLE_SECRET_TARGET" --from-file=ca.crt=$DEST/pem/tls-ca-bundle-all.pem --dry-run=client -o yaml | kubectl replace -f -
     echo "Secret '$CA_BUNDLE_SECRET_TARGET' updated."
