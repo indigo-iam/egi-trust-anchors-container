@@ -48,6 +48,7 @@ compose section for running this container would be:
 services:
     trustanchors:
         image: docker.io/indigoiam/egi-trustanchors:main
+        pull_policy: always
         container_name: egi-trustanchors
         environment:
             - FORCE_TRUST_ANCHORS_UPDATE=1
