@@ -62,7 +62,7 @@ if [ -n "${CA_BUNDLE_TARGET}" ]; then
 fi
 
 if [ -n "${CA_BUNDLE_SECRET_TARGET}" ]; then
-  echo "Copying ca bundle to ${CA_BUNDLE_SECRET_TARGET}"
+  echo "Copying CA bundle to ${CA_BUNDLE_SECRET_TARGET}"
 
   if ! command -v kubectl &> /dev/null; then
     curl -L "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
