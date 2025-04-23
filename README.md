@@ -27,14 +27,15 @@ free but must be consistent across the configuration):
 docker volume create cabundle
 docker volume create trustanchors
 ```
-The script behavior is controlled by 5 environment variables:
+The script behavior is controlled by several environment variables:
 
 - `FETCH_CRL_TIMEOUT_SECS` (default 5 seconds): timeout of fetch-crl operations
 - `FORCE_TRUST_ANCHORS_UPDATE` (default unset): **needs to be defined for the update to be executed**. If unset (or empty string) the script
 exits immediately and doesn't do anything
-- `TRUST_ANCHORS_TARGET` (default unset): i**needs to be defined to properly update the trustanchors**. Location where the egi trustanchors
+- `TRUST_ANCHORS_TARGET` (default unset): **needs to be defined to properly update the trustanchors**. Location where the egi trustanchors
 volume is mounted (where the container /etc/grid-security/certificates is rsync'ed)
-- `CA_BUNDLE_TARGET` (default unset): location where the system ca bundles are kept and where the container /etc/pki is rsync'ed, in particular
+- `CA_BUNDLE_TARGET` (default unset): **definition recommended to get the last version of the standard CA trust**. Location where the system CA
+bundles are kept and where the container /etc/pki is rsync'ed, in particular
 the bundle `tls-ca-bundle-all.pem` that contains the usual system bundle plus the egi trust-anchors
 - `CA_BUNDLE_SECRET_TARGET` (default unset): an optional kubernetes secret including tls-ca-bundle-all.pem
 
@@ -78,7 +79,8 @@ restart the container with an entry like:
 
 ```
 # podman command can be used if using Podman instead of Docker
-0 3 * * * root (date --iso-8601=seconds --utc; (/usr/bin/docker restart egi-trustanchors)) >> /var/log/egi-trustanchors-update.log 2>&1
+0 3 * * * root (date --iso-8601=seconds --utc; (/usr/bin/docker restart egi-trustanchors && /usr/bin/docker wait --interval 15s egi-trustanchors && /usr/bin/docker exec nginx-voms nginx -s reload)) >> /var/log/egi-trustanchors-update.log 2>&1
 ```
+After an update of the CA bundle, it is necessary to reload Nginx as the CA bundle is loaded during Nginx startup. 
 
-`Note: the log is basically 2 lines per run if no error occurs.`
+*Note: adapt the `egi-trustanchors` and `nginx-voms` container names to your configuration*
