@@ -6,7 +6,11 @@ set -ex
 # FIXME: remove once everybody agreed that previous behaviour was a bug...
 CA_BUNDLE_APPEND_NEW_TRUST=${CA_BUNDLE_APPEND_NEW_TRUST:=0}
 
+# Variable to remove from CA_BUNDLE_TARGET files no longer existing in /etc/pki
+# Disabled by default (backward compatibility)
+REMOVE_OBSOLETE_FILES_FROM_TARGET=${CA_BUNDLE_REMOVE_OBSOLETE_FILES:-0}
 
+# fetch-crl timeout
 FETCH_CRL_TIMEOUT_SECS=${FETCH_CRL_TIMEOUT_SECS:-5}
 
 if [[ -z "${FORCE_TRUST_ANCHORS_UPDATE}" ]]; then
@@ -38,14 +42,23 @@ fi
 TRUST_ANCHORS_TARGET=${TRUST_ANCHORS_TARGET:=}
 CA_BUNDLE_TARGET=${CA_BUNDLE_TARGET:=}
 
+if [ ${REMOVE_OBSOLETE_FILES_FROM_TARGET} -eq 1 ]
+then
+  delete_options='--delete'
+  delete_msg='and removing obsolete file from it'
+else
+  delete_options=''
+  delete_msg=''
+fi
+
 if [ -n "${TRUST_ANCHORS_TARGET}" ]; then
-  echo "Copying trust anchors to ${TRUST_ANCHORS_TARGET}"
-  rsync -avu -O --no-owner --no-group --no-perms /etc/grid-security/certificates/ ${TRUST_ANCHORS_TARGET}
+  echo "Copying trust anchors to ${TRUST_ANCHORS_TARGET} ${delete_msg}"
+  rsync -avu ${delete_options} -O --no-owner --no-group --no-perms /etc/grid-security/certificates/ ${TRUST_ANCHORS_TARGET}
 fi
 
 if [ -n "${CA_BUNDLE_TARGET}" ]; then
-  echo "Copying ca bundle to ${CA_BUNDLE_TARGET}"
-  rsync -avu -O --no-owner --no-group --no-perms --exclude 'CA/private'  /etc/pki/ ${CA_BUNDLE_TARGET}
+  echo "Copying CA bundle to ${CA_BUNDLE_TARGET} ${delete_msg}"
+  rsync -avu ${delete_options} -O --no-owner --no-group --no-perms --exclude 'CA/private'  /etc/pki/ ${CA_BUNDLE_TARGET}
 fi
 
 if [ -n "${CA_BUNDLE_SECRET_TARGET}" ]; then
