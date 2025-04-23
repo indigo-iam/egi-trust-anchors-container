@@ -1,6 +1,12 @@
 #!/bin/bash
 set -ex
 
+# Variable to restore the old buggy behaviour resulting in duplicating entries in the
+# new CA bundle.
+# FIXME: remove once everybody agreed that previous behaviour was a bug...
+CA_BUNDLE_APPEND_NEW_TRUST=${CA_BUNDLE_APPEND_NEW_TRUST:=0}
+
+
 FETCH_CRL_TIMEOUT_SECS=${FETCH_CRL_TIMEOUT_SECS:-5}
 
 if [[ -z "${FORCE_TRUST_ANCHORS_UPDATE}" ]]; then
@@ -18,12 +24,16 @@ done
 
 update-ca-trust extract
 
-## Update ca trust does not include trust anchors that can sign client-auth certs,
-## which looks like a bug
+## Updated CA trust does not include trust anchors that can sign client-auth certs,
+## which looks like a bug: readd it after extracting the new trust.
 DEST=/etc/pki/ca-trust/extracted
-
 /usr/bin/p11-kit extract --comment --format=pem-bundle --filter=ca-anchors --overwrite --purpose client-auth $DEST/pem/tls-ca-bundle-client.pem
-cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem >> $DEST/pem/tls-ca-bundle-all.pem
+if [ ${CA_BUNDLE_APPEND_NEW_TRUST} -eq 0 ]
+then
+  cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem > $DEST/pem/tls-ca-bundle-all.pem
+else
+  cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem >> $DEST/pem/tls-ca-bundle-all.pem
+fi
 
 TRUST_ANCHORS_TARGET=${TRUST_ANCHORS_TARGET:=}
 CA_BUNDLE_TARGET=${CA_BUNDLE_TARGET:=}
