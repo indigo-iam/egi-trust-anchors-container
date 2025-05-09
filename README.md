@@ -2,7 +2,7 @@
 
 # EGI trust anchors container
 
-This is [container](https://hub.docker.com/r/indigoiam/egi-trustanchors) contains fetch-crl and other utilities
+This [container](https://hub.docker.com/r/indigoiam/egi-trustanchors) contains fetch-crl and other utilities
 to provide an up-to-date trust anchors to relying applications, like Nginx, and to VOMS Attribute Authority service. When run,
 the container updates 2 components:
 
@@ -68,7 +68,7 @@ volumes:
 ```
 
 *Note: the parameters `external: true` in volumes is recommended if you use Docker or Podman to ensure that the volumes are not deleted once the container
-is removed. If you run the container in the ocntext of a CI, you may want to omit it so that the volume is created on the fly.*
+is removed. If you run the container in the context of a CI, you may want to omit it so that the volume is created on the fly.*
 
 ## Cron job
 
