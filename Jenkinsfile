@@ -15,7 +15,7 @@ pipeline {
     stage('build image') {
       steps {
         script {
-          def dockerImage = docker.build("indigoiam/egi-trustanchors:${env.BRANCH_NAME}", "-f ./Dockerfile .")
+          def dockerImage = docker.build("indigoiam/egi-trustanchors:${env.BRANCH_NAME}", "--no-cache -f ./Dockerfile .")
           docker.withRegistry('https://index.docker.io/v1/', "docker-cnafsoftwaredevel") {
             dockerImage.push()
           }
