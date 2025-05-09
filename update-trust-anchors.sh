@@ -39,7 +39,9 @@ else
   cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem >> $DEST/pem/tls-ca-bundle-all.pem
 fi
 
-TRUST_ANCHORS_TARGET=${TRUST_ANCHORS_TARGET:=}
+# For backward compatibility, allow to define TRUST_ANCHORS_TARGET as a script parameter rather
+# than defining the variable
+TRUST_ANCHORS_TARGET=${TRUST_ANCHORS_TARGET:=$1}
 CA_BUNDLE_TARGET=${CA_BUNDLE_TARGET:=}
 
 if [ ${REMOVE_OBSOLETE_FILES_FROM_TARGET} -eq 1 ]
@@ -76,10 +78,4 @@ if [ -n "${CA_BUNDLE_SECRET_TARGET}" ]; then
     kubectl create secret generic "$CA_BUNDLE_SECRET_TARGET" --from-file=ca.crt=$DEST/pem/tls-ca-bundle-all.pem
     echo "Secret '$CA_BUNDLE_SECRET_TARGET' created."
   fi
-
-fi
-
-if [ $# -gt 0 ]; then
-  echo "Certificate copy requested to $1"
-  rsync -avu -O --no-owner --no-group --no-perms /etc/grid-security/certificates/ $1
 fi
