@@ -1,11 +1,6 @@
 #!/bin/bash
 set -ex
 
-# Variable to restore the old buggy behaviour resulting in duplicating entries in the
-# new CA bundle.
-# FIXME: remove once everybody agreed that previous behaviour was a bug...
-CA_BUNDLE_APPEND_NEW_TRUST=${CA_BUNDLE_APPEND_NEW_TRUST:=0}
-
 # Variable to remove from CA_BUNDLE_TARGET files no longer existing in /etc/pki
 # Disabled by default (backward compatibility)
 REMOVE_OBSOLETE_FILES_FROM_TARGET=${REMOVE_OBSOLETE_FILES_FROM_TARGET:-0}
@@ -32,12 +27,7 @@ update-ca-trust extract
 ## which looks like a bug: readd it after extracting the new trust.
 DEST=/etc/pki/ca-trust/extracted
 /usr/bin/p11-kit extract --comment --format=pem-bundle --filter=ca-anchors --overwrite --purpose client-auth $DEST/pem/tls-ca-bundle-client.pem
-if [ ${CA_BUNDLE_APPEND_NEW_TRUST} -eq 0 ]
-then
-  cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem > $DEST/pem/tls-ca-bundle-all.pem
-else
-  cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem >> $DEST/pem/tls-ca-bundle-all.pem
-fi
+cat $DEST/pem/tls-ca-bundle.pem $DEST/pem/tls-ca-bundle-client.pem > $DEST/pem/tls-ca-bundle-all.pem
 
 # For backward compatibility, allow to define TRUST_ANCHORS_TARGET as a script parameter rather
 # than defining the variable
