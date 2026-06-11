@@ -38,7 +38,8 @@ volume is mounted (where the container /etc/grid-security/certificates is rsync'
 bundles are kept and where the container /etc/pki is rsync'ed, in particular
 the bundle `tls-ca-bundle-all.pem` that contains the usual system bundle plus the egi trust-anchors
 - `CA_BUNDLE_SECRET_TARGET` (default unset): an optional kubernetes secret including tls-ca-bundle-all.pem
-
+- `REMOVE_OBSOLETE_FILES_FROM_TARGET` (default: 0): if 1, remove files that are no longer present in the source
+from `CA_BUNDLE_TARGET` and `TRUST_ANCHORS_TARGET`.
 
 ## Compose file
 
